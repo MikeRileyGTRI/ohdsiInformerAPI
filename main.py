@@ -46,6 +46,8 @@ def accessDB(outColumns,tableName,whereQueries={},schemaName='omop_v5', LIMIT = 
     if ',' in whereQueries[condition]:
       conditionArray = whereQueries[condition].split(',')
       query += condition + ' in (' + ','.join(conditionArray) + ')'
+    elif 'name' in condition:
+      query += condition + " = '" + whereQueries[condition] + "'"
     else: 
       query += condition + " = " + whereQueries[condition]
     if i < len(whereQueries)-1:
@@ -64,8 +66,8 @@ def setQueryParams(request,inColumns):
 
 @app.route("/depression_results")
 def depressionResults():
-  outColumns = ['calci95lb','calci95ub','calrr','calp','treated']
-  inColumns = ['outcomeid','targetid','comparatorid']
+  outColumns = ['calci95lb','calci95ub','calrr','calp','treated','outcomename','targetname','comparatorname','outcomeid','targetid','comparatorid']
+  inColumns = ['outcomeid','targetid','comparatorid','outcomename','targetname','comparatorname']
   whereQueries = setQueryParams(request,inColumns)
   return accessDB(outColumns,'depression_results',whereQueries)
 
@@ -73,7 +75,7 @@ def depressionResults():
 @app.route('/irs')
 def irs():
   inColumns = ['drug_concept_id','drug_name','condition_concept_id','condition_concept_name']
-  outColumns = ['num_persons_post_itt','pt_itt','ir_itt_1000pp']
+  outColumns = ['num_persons_post_itt','pt_itt','ir_itt_1000pp','drug_concept_id','drug_name','condition_concept_id','condition_concept_name']
   whereQueries = setQueryParams(request,inColumns)
   return accessDB(outColumns,'irs_clean',whereQueries)
 
